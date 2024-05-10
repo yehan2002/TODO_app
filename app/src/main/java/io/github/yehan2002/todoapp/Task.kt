@@ -19,6 +19,6 @@ data class Task(
     @ColumnInfo(name="description")
     val description: String,
 
-    @ColumnInfo(name="deadline")
-    val deadline: Date
+//    @ColumnInfo(name="deadline")
+//    val deadline: Date
 )
