@@ -1,11 +1,16 @@
 package io.github.yehan2002.todoapp
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
 import android.widget.CalendarView
 import android.widget.LinearLayout
+import android.widget.Spinner
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
@@ -25,25 +30,16 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: TaskViewModel
     private lateinit var taskRV: RecyclerView
-    private lateinit var taskAdapter: TaskAdapter;
+    private lateinit var taskAdapter: TaskAdapter
 
-    private lateinit var db: TaskDatabase ;
+    private lateinit var db: TaskDatabase
 
-
-    private val tasks = arrayOf(
-        Task(1, "test", Priority.Normal, "123", Date()),
-        Task(2, "test 2", Priority.Normal, "123", Date()),
-        Task(3, "test 3", Priority.Normal, "123", Date()),
-        Task(4, "test 4", Priority.Normal, "123", Date()),
-        Task(5, "test 5", Priority.Normal, "123", Date()),
-        Task(6, "test 6", Priority.Normal, "123", Date())
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        db =TaskDatabase.getInstance(this)
+        db = TaskDatabase.getInstance(this)
 
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -53,22 +49,43 @@ class MainActivity : AppCompatActivity() {
         }
 
         val taskDao = db.taskDao()
-        CoroutineScope(Dispatchers.IO).launch {
-            taskDao.insertTask(*tasks)
-        }
+
+        findViewById<Toolbar>(R.id.toolbar).title = "Task Manager"
 
         findViewById<FloatingActionButton>(R.id.add_btn).setOnClickListener {
             val builder = AlertDialog.Builder(this)
-            builder.setView(R.layout.task_dialog);
+            val inflater = LayoutInflater.from(this)
+            val dialogView: View = inflater.inflate(R.layout.task_dialog, null)
+
+            val name = dialogView.findViewById<TextView>(R.id.taskNameInp)
+            val desc = dialogView.findViewById<TextView>(R.id.taskDescriptionInp)
+            val date = dialogView.findViewById<CalendarView>(R.id.task_date)
+            val priority = dialogView.findViewById<Spinner>(R.id.taskPriorityInp)
+
+            date.minDate = Date().time
+
+
+            builder.setView(dialogView)
 
             builder.setTitle("Create Task")
 
-            builder.setPositiveButton("Create") { dialog, which ->
+            builder.setPositiveButton("Create") { _, _ ->
                 CoroutineScope(Dispatchers.IO).launch {
-
+                    db.taskDao().insertTask(
+                        Task(
+                            null,
+                            name.text.toString(),
+                            Priority.valueOf(priority.selectedItem.toString()),
+                            desc.text.toString(), Date(date.date)
+                        )
+                    )
+                    val data = taskDao.getTasks()
+                    runOnUiThread {
+                        viewModel.setTasks(data)
+                    }
                 }
             }
-            builder.setNegativeButton("Cancel") { dialog, which ->
+            builder.setNegativeButton("Cancel") { dialog, _ ->
                 dialog.cancel()
             }
 
@@ -85,7 +102,7 @@ class MainActivity : AppCompatActivity() {
             LinearLayout.VERTICAL
         )
 
-        taskRV.addItemDecoration(dividerItemDecoration);
+        taskRV.addItemDecoration(dividerItemDecoration)
 
         viewModel.tasks.observe(this) {
             taskAdapter = TaskAdapter(this, it, viewModel)

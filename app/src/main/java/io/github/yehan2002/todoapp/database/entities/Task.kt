@@ -12,7 +12,7 @@ import java.util.Date
 @TypeConverters(DataConverters::class)
 data class Task(
     @PrimaryKey
-    val uid: Int,
+    val uid: Int?,
 
     @ColumnInfo(name = "name")
     val name: String,

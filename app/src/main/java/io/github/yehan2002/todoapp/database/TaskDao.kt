@@ -9,7 +9,7 @@ import io.github.yehan2002.todoapp.database.entities.Task
 @Dao
 interface TaskDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertTask(vararg task: Task);
+    fun insertTask(vararg task: Task)
 
     @Query("SELECT * FROM Task")
     fun  getTasks(): List<Task>

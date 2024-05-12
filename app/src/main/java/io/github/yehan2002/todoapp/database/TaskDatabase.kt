@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import io.github.yehan2002.todoapp.database.entities.Task
 
-@Database(entities = [Task::class], version = 2)
+@Database(entities = [Task::class], version = 3)
 abstract class TaskDatabase: RoomDatabase() {
     abstract fun taskDao(): TaskDao
 

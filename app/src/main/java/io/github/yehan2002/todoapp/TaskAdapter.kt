@@ -1,5 +1,6 @@
 package io.github.yehan2002.todoapp
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +21,8 @@ class TaskAdapter (
             val task = tasks[position]
             holder.taskName.text = task.name
             holder.taskPriority.text = task.priority.toString()
-            val days = TimeUnit.MILLISECONDS.toDays(task.deadline.time- Date().time);
+            val days = TimeUnit.MILLISECONDS.toDays(task.deadline.time- Date().time)
+            Log.d("test", String.format("onBindViewHolder: %d %d", task.deadline.time, Date().time))
             if (days == 0L){
                 holder.taskDate.text = "Today"
             }else if (days < 0L){
