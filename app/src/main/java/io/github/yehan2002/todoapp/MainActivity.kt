@@ -23,6 +23,7 @@ import io.github.yehan2002.todoapp.database.entities.Task
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import java.util.Date
 
 
@@ -53,46 +54,8 @@ class MainActivity : AppCompatActivity() {
         findViewById<Toolbar>(R.id.toolbar).title = "Task Manager"
 
         findViewById<FloatingActionButton>(R.id.add_btn).setOnClickListener {
-            val builder = AlertDialog.Builder(this)
-            val inflater = LayoutInflater.from(this)
-            val dialogView: View = inflater.inflate(R.layout.task_dialog, null)
-
-            val name = dialogView.findViewById<TextView>(R.id.taskNameInp)
-            val desc = dialogView.findViewById<TextView>(R.id.taskDescriptionInp)
-            val date = dialogView.findViewById<CalendarView>(R.id.task_date)
-            val priority = dialogView.findViewById<Spinner>(R.id.taskPriorityInp)
-
-            date.minDate = Date().time
-
-
-            builder.setView(dialogView)
-
-            builder.setTitle("Create Task")
-
-            builder.setPositiveButton("Create") { _, _ ->
-                CoroutineScope(Dispatchers.IO).launch {
-                    db.taskDao().insertTask(
-                        Task(
-                            null,
-                            name.text.toString(),
-                            Priority.valueOf(priority.selectedItem.toString()),
-                            desc.text.toString(), Date(date.date)
-                        )
-                    )
-                    val data = taskDao.getTasks()
-                    runOnUiThread {
-                        viewModel.setTasks(data)
-                    }
-                }
-            }
-            builder.setNegativeButton("Cancel") { dialog, _ ->
-                dialog.cancel()
-            }
-
-            val alertDialog = builder.create()
-            alertDialog.show()
+            displayDialog(false, null)
         }
-
 
         viewModel = ViewModelProvider(this)[TaskViewModel::class.java]
         taskRV = findViewById(R.id.task_container)
@@ -116,6 +79,64 @@ class MainActivity : AppCompatActivity() {
                 viewModel.setTasks(data)
             }
         }
+    }
+
+    fun displayDialog(isEdit: Boolean, task: Task?){
+        val builder = AlertDialog.Builder(this)
+        val inflater = LayoutInflater.from(this)
+        val dialogView: View = inflater.inflate(R.layout.task_dialog, null)
+
+        val name = dialogView.findViewById<TextView>(R.id.taskNameInp)
+        val desc = dialogView.findViewById<TextView>(R.id.taskDescriptionInp)
+        val date = dialogView.findViewById<CalendarView>(R.id.task_date)
+        date.setOnDateChangeListener { _, year, month, dayOfMonth ->
+            date.date = Calendar.getInstance()
+                .apply { set(year, month, dayOfMonth) }
+                .timeInMillis
+        }
+        val priority = dialogView.findViewById<Spinner>(R.id.taskPriorityInp)
+
+        date.minDate = Date().time
+
+        if (task != null){
+            name.text = task.name
+            desc.text = task.description
+            date.date = task.deadline.time
+            priority.setSelection(task.priority.ordinal)
+        }
+
+        val type = when (isEdit){true->"Edit";false-> "Create"}
+
+        builder.setView(dialogView)
+        builder.setTitle("$type Task")
+
+        builder.setPositiveButton(type) { _, _ ->
+            CoroutineScope(Dispatchers.IO).launch {
+                val newTask =  Task(
+                    null,
+                    name.text.toString(),
+                    Priority.valueOf(priority.selectedItem.toString()),
+                    desc.text.toString(), Date(date.date)
+                )
+                if (isEdit){
+                    newTask.uid = task!!.uid
+                    db.taskDao().updateTask(newTask)
+                }else{
+                    db.taskDao().insertTask(newTask)
+                }
+
+                val data = db.taskDao().getTasks()
+                runOnUiThread {
+                    viewModel.setTasks(data)
+                }
+            }
+        }
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.cancel()
+        }
+
+        val alertDialog = builder.create()
+        alertDialog.show()
     }
 
 

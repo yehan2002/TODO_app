@@ -55,11 +55,11 @@
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/delBtn"
         android:layout_width="32sp"
         android:layout_height="match_parent"
         android:layout_weight="0"
         android:background="#00FFFFFF"
-        app:srcCompat="@drawable/check" />
+        app:srcCompat="@android:drawable/ic_menu_delete" />
 
 </LinearLayout>
