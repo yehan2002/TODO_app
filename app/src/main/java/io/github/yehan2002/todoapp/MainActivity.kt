@@ -8,6 +8,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
+import io.github.yehan2002.todoapp.database.TaskDatabase
+import io.github.yehan2002.todoapp.database.entities.Task
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,7 +28,8 @@ class MainActivity : AppCompatActivity() {
         Task(3, "test 3", 1, "123"),
         Task(4, "test 4", 1, "123"),
         Task(5, "test 5", 1, "123"),
-        Task(6, "test 6", 1, "123"))
+        Task(6, "test 6", 1, "123")
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,4 +54,6 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
+
 }

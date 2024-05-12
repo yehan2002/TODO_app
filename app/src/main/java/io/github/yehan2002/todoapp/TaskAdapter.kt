@@ -1,9 +1,9 @@
 package io.github.yehan2002.todoapp
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import io.github.yehan2002.todoapp.database.entities.Task
 
 class TaskAdapter (
     private val context: MainActivity,

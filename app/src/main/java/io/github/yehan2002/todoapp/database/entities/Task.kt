@@ -1,4 +1,4 @@
-package io.github.yehan2002.todoapp
+package io.github.yehan2002.todoapp.database.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

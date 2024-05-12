@@ -1,9 +1,10 @@
-package io.github.yehan2002.todoapp
+package io.github.yehan2002.todoapp.database
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import io.github.yehan2002.todoapp.database.entities.Task
 import kotlinx.coroutines.flow.Flow
 
 @Dao
