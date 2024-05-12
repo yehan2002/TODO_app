@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
 class TaskAdapter (
-    private val context: Context,
+    private val context: MainActivity,
     private val tasks: List<Task>
     ) : RecyclerView.Adapter<TaskViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {

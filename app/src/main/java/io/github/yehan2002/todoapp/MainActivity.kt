@@ -7,18 +7,27 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var taskRV: RecyclerView;
+    private lateinit var taskRV: RecyclerView
     private lateinit var taskAdapter: TaskAdapter;
 
-    private val tasks = arrayOf(Task(1, "test", 1, "123"),
-        Task(1, "test 2", 1, "123"),
-        Task(1, "test 3", 1, "123"),
-        Task(1, "test 4", 1, "123"),
-        Task(1, "test 5", 1, "123"),
-        Task(1, "test 6", 1, "123"))
+    private val db = Room.databaseBuilder(
+        applicationContext,
+        TaskDatabase::class.java, "task-db"
+    ).build()
+
+
+    private val tasks = arrayOf(
+        Task(1, "test", 1, "123"),
+        Task(2, "test 2", 1, "123"),
+        Task(3, "test 3", 1, "123"),
+        Task(4, "test 4", 1, "123"),
+        Task(5, "test 5", 1, "123"),
+        Task(6, "test 6", 1, "123"))
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -29,8 +38,14 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        val taskDao = db.taskDao()
+        taskDao.insertTask(*tasks)
+
+        taskDao.getTasks()
+
+
         taskAdapter = TaskAdapter(this, tasks.toList())
-        taskRV = findViewById(R.id.task_container);
+        taskRV = findViewById(R.id.task_container)
         taskRV.adapter = taskAdapter
         taskRV.layoutManager = LinearLayoutManager(this)
 
