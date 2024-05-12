@@ -7,7 +7,8 @@ import io.github.yehan2002.todoapp.database.entities.Task
 
 class TaskAdapter (
     private val context: MainActivity,
-    private val tasks: List<Task>
+    private val tasks: List<Task>,
+    private val viewModel: TaskViewModel,
     ) : RecyclerView.Adapter<TaskViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
             val itemView = LayoutInflater.from(parent.context).inflate(R.layout.task_layout, parent, false)

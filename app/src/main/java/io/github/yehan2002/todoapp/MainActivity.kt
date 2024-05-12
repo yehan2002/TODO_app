@@ -5,14 +5,19 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import io.github.yehan2002.todoapp.database.TaskDatabase
 import io.github.yehan2002.todoapp.database.entities.Task
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var viewModel: TaskViewModel
     private lateinit var taskRV: RecyclerView
     private lateinit var taskAdapter: TaskAdapter;
 
@@ -46,13 +51,21 @@ class MainActivity : AppCompatActivity() {
 
         taskDao.getTasks()
 
-
-        taskAdapter = TaskAdapter(this, tasks.toList())
+        viewModel = ViewModelProvider(this)[TaskViewModel::class.java]
         taskRV = findViewById(R.id.task_container)
-        taskRV.adapter = taskAdapter
-        taskRV.layoutManager = LinearLayoutManager(this)
 
+        viewModel.tasks.observe(this) {
+            taskAdapter = TaskAdapter(this, it, viewModel)
+            taskRV.adapter = taskAdapter
+            taskRV.layoutManager = LinearLayoutManager(this)
+        }
 
+        CoroutineScope(Dispatchers.IO).launch {
+            val data = taskDao.getTasks()
+            runOnUiThread {
+                viewModel.setTasks(data)
+            }
+        }
     }
 
 
