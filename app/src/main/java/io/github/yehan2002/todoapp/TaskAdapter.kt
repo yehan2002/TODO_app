@@ -4,6 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.github.yehan2002.todoapp.database.entities.Task
+import java.util.Date
+import java.util.concurrent.TimeUnit
 
 class TaskAdapter (
     private val context: MainActivity,
@@ -18,7 +20,14 @@ class TaskAdapter (
             val task = tasks[position]
             holder.taskName.text = task.name
             holder.taskPriority.text = task.priority.toString()
-            holder.taskDate.text = ""
+            val days = TimeUnit.MILLISECONDS.toDays(task.deadline.time- Date().time);
+            if (days == 0L){
+                holder.taskDate.text = "Today"
+            }else if (days < 0L){
+                holder.taskDate.text = String.format("%d Days Ago",-days)
+            }else{
+                holder.taskDate.text = String.format("%d Days", days)
+            }
         }
         override fun getItemCount() = tasks.size
 }

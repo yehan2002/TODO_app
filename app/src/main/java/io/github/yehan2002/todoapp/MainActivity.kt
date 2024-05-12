@@ -1,19 +1,25 @@
 package io.github.yehan2002.todoapp
 
 import android.os.Bundle
+import android.widget.CalendarView
+import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.github.yehan2002.todoapp.database.TaskDatabase
 import io.github.yehan2002.todoapp.database.entities.Task
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Date
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -51,9 +57,35 @@ class MainActivity : AppCompatActivity() {
             taskDao.insertTask(*tasks)
         }
 
+        findViewById<FloatingActionButton>(R.id.add_btn).setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            builder.setView(R.layout.task_dialog);
+
+            builder.setTitle("Create Task")
+
+            builder.setPositiveButton("Create") { dialog, which ->
+                CoroutineScope(Dispatchers.IO).launch {
+
+                }
+            }
+            builder.setNegativeButton("Cancel") { dialog, which ->
+                dialog.cancel()
+            }
+
+            val alertDialog = builder.create()
+            alertDialog.show()
+        }
+
 
         viewModel = ViewModelProvider(this)[TaskViewModel::class.java]
         taskRV = findViewById(R.id.task_container)
+
+        val dividerItemDecoration = DividerItemDecoration(
+            taskRV.context,
+            LinearLayout.VERTICAL
+        )
+
+        taskRV.addItemDecoration(dividerItemDecoration);
 
         viewModel.tasks.observe(this) {
             taskAdapter = TaskAdapter(this, it, viewModel)
