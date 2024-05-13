@@ -8,4 +8,6 @@
     <string name="date_today">Today</string>
     <string name="date_past">%d Days Ago</string>
     <string name="date_future">%d Days</string>
+    <string name="delete_dialog_msg">This will permanently delete this task</string>
+    <string name="delete_dialog_title">Delete Task?</string>
 </resources>

@@ -3,6 +3,7 @@ package io.github.yehan2002.todoapp
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.recyclerview.widget.RecyclerView
 import io.github.yehan2002.todoapp.database.TaskDatabase
@@ -56,15 +57,26 @@ class TaskAdapter (
 
 
             holder.view.findViewById<AppCompatImageButton>(R.id.delBtn).setOnClickListener {
+                val builder = AlertDialog.Builder(context)
 
-                CoroutineScope(Dispatchers.IO).launch {
-                    dao.deleteTask(task)
-                    val data = dao.getTasks()
-                    context.runOnUiThread {
-                        viewModel.setTasks(data)
+                builder.setTitle(context.getString(R.string.delete_dialog_title))
+                builder.setMessage(context.getString(R.string.delete_dialog_msg))
+                
+                builder.setPositiveButton("Delete") { d, _ ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        dao.deleteTask(task)
+                        val data = dao.getTasks()
+                        context.runOnUiThread {
+                            viewModel.setTasks(data)
+                        }
                     }
+                    d.dismiss()
+                }
+                builder.setNegativeButton("Cancel") { d, _ ->
+                    d.dismiss()
                 }
 
+                builder.create().show();
             }
 
         }
