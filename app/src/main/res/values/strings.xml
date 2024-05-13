@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">TODO App</string>
+    <string name="placeholder_time">3 Days</string>
+    <string name="placeholder_priority">High</string>
+    <string name="placeholder_task_name">Task Name</string>
+    <string name="task_delete">Delete task</string>
+    <string name="placeholder_task_desc">Task description text that can be very long and span multiple lines. It contains a description about the task that may be more than 100 chars</string>
+    <string name="date_today">Today</string>
+    <string name="date_past">%d Days Ago</string>
+    <string name="date_future">%d Days</string>
 </resources>

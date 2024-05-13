@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.CalendarView
-import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -14,7 +13,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -60,12 +58,6 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[TaskViewModel::class.java]
         taskRV = findViewById(R.id.task_container)
 
-        val dividerItemDecoration = DividerItemDecoration(
-            taskRV.context,
-            LinearLayout.VERTICAL
-        )
-
-        taskRV.addItemDecoration(dividerItemDecoration)
 
         viewModel.tasks.observe(this) {
             taskAdapter = TaskAdapter(this, it, viewModel)
@@ -134,7 +126,6 @@ class MainActivity : AppCompatActivity() {
         builder.setNegativeButton("Cancel") { dialog, _ ->
             dialog.cancel()
         }
-
         val alertDialog = builder.create()
         alertDialog.show()
     }

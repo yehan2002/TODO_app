@@ -1,11 +1,8 @@
 package io.github.yehan2002.todoapp
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.recyclerview.widget.RecyclerView
 import io.github.yehan2002.todoapp.database.TaskDatabase
@@ -30,43 +27,36 @@ class TaskAdapter (
             holder.taskName.text = task.name
             holder.taskPriority.text = task.priority.toString()
             val days = TimeUnit.MILLISECONDS.toDays(task.deadline.time- Date().time)
-            Log.d("test", String.format("onBindViewHolder: %d %d", task.deadline.time, Date().time))
+
             if (days == 0L){
-                holder.taskDate.text = "Today"
+                holder.taskDate.text = context.getString(R.string.date_today)
             }else if (days < 0L){
-                holder.taskDate.text = String.format("%d Days Ago",-days)
+                holder.taskDate.text = String.format(context.getString(R.string.date_past), -days)
             }else{
-                holder.taskDate.text = String.format("%d Days", days)
+                holder.taskDate.text = String.format(context.getString(R.string.date_future), days)
             }
+
             val dao = TaskDatabase.getInstance(context).taskDao();
 
             holder.view.setOnClickListener {
-                val builder = AlertDialog.Builder(context)
-                val inflater = LayoutInflater.from(context)
-                val dialogView: View = inflater.inflate(R.layout.view_dialog, null)
-
-                builder.setView(dialogView)
-                builder.setTitle("View task")
-
-
-
-                dialogView.findViewById<TextView>(R.id.nameViewText).text = task.name;
-                dialogView.findViewById<TextView>(R.id.descriptionViewText ).text = task.description;
-                dialogView.findViewById<TextView>(R.id.priorityViewText).text = task.priority.toString();
-                dialogView.findViewById<TextView>(R.id.deadlineViewText).text = task.deadline.toString();
-                builder.setPositiveButton("Close") { dialog, _ ->
-                    dialog.cancel()
+                if (holder.expanderView.visibility == View.GONE){
+                    holder.expanderView.visibility = View.VISIBLE
+                    holder.taskExpander.setImageResource(R.drawable.expand_up)
+                    holder.taskName.maxLines = Int.MAX_VALUE
+                }else{
+                    holder.expanderView.visibility = View.GONE
+                    holder.taskExpander.setImageResource(R.drawable.expand_down)
+                    holder.taskName.maxLines = 1
                 }
-                builder.setNegativeButton("Edit") { dialog, _ ->
-                    context.displayDialog(true, task);
-                }
-
-                val alertDialog = builder.create()
-                alertDialog.show()
-
             }
 
+            holder.editBtn.setOnClickListener {
+                context.displayDialog(true, task)
+            }
+
+
             holder.view.findViewById<AppCompatImageButton>(R.id.delBtn).setOnClickListener {
+
                 CoroutineScope(Dispatchers.IO).launch {
                     dao.deleteTask(task)
                     val data = dao.getTasks()
