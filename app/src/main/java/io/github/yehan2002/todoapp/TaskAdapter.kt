@@ -27,6 +27,7 @@ class TaskAdapter (
             val task = tasks[position]
             holder.taskName.text = task.name
             holder.taskPriority.text = task.priority.toString()
+            holder.taskDesc.text = task.description
             val days = TimeUnit.MILLISECONDS.toDays(task.deadline.time- Date().time)
 
             if (days == 0L){
