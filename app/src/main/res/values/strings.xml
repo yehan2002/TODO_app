@@ -11,4 +11,6 @@
     <string name="delete_dialog_msg">This will permanently delete this task</string>
     <string name="delete_dialog_title">Delete Task?</string>
     <string name="search">Search</string>
+    <string name="edit_desc">Description</string>
+    <string name="edit_name">Task Name</string>
 </resources>

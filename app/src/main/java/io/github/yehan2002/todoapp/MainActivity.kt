@@ -1,9 +1,11 @@
 package io.github.yehan2002.todoapp
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.CalendarView
+import android.widget.DatePicker
+import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -20,8 +22,10 @@ import io.github.yehan2002.todoapp.database.entities.Task
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
+import java.util.Locale
 
 
 class MainActivity : AppCompatActivity() {
@@ -31,6 +35,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var taskAdapter: TaskAdapter
 
     private lateinit var db: TaskDatabase
+
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,24 +85,35 @@ class MainActivity : AppCompatActivity() {
 
         val name = dialogView.findViewById<TextView>(R.id.taskNameInp)
         val desc = dialogView.findViewById<TextView>(R.id.taskDescriptionInp)
-        val date = dialogView.findViewById<CalendarView>(R.id.task_date)
-        date.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            date.date = Calendar.getInstance()
-                .apply { set(year, month, dayOfMonth) }
-                .timeInMillis
-        }
         val priority = dialogView.findViewById<Spinner>(R.id.taskPriorityInp)
+        val dateText = dialogView.findViewById<TextView>(R.id.timeView)
+        val dateContainer = dialogView.findViewById<LinearLayout>(R.id.timeContainer)
 
-        date.minDate = Date().time
+        var date = Date()
 
         if (task != null){
             name.text = task.name
             desc.text = task.description
-            date.date = task.deadline.time
+            date = task.deadline
             priority.setSelection(task.priority.ordinal)
         }
 
+        val cal = Calendar.getInstance();
+        cal.timeInMillis = date.time
+
+        dateText.text = dateFormat.format(cal.time);
+
+        val datePicker = DatePickerDialog(this, {
+                _: DatePicker, i: Int, i1: Int, i2: Int ->
+            cal.set(i,i1,i2)
+            dateText.text = dateFormat.format(cal.time);
+        }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH))
+
+        datePicker.datePicker.minDate = cal.timeInMillis
+
         val type = when (isEdit){true->"Edit";false-> "Create"}
+
+        dateContainer.setOnClickListener { datePicker.show() }
 
         builder.setView(dialogView)
         builder.setTitle("$type Task")
@@ -107,7 +124,7 @@ class MainActivity : AppCompatActivity() {
                     null,
                     name.text.toString(),
                     Priority.valueOf(priority.selectedItem.toString()),
-                    desc.text.toString(), Date(date.date)
+                    desc.text.toString(), Date(cal.timeInMillis)
                 )
                 if (isEdit){
                     newTask.uid = task!!.uid
