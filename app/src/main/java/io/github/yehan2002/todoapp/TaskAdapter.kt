@@ -65,10 +65,7 @@ class TaskAdapter (
                 builder.setPositiveButton("Delete") { d, _ ->
                     CoroutineScope(Dispatchers.IO).launch {
                         dao.deleteTask(task)
-                        val data = dao.getTasks()
-                        context.runOnUiThread {
-                            viewModel.setTasks(data)
-                        }
+                        context.updateTasks()
                     }
                     d.dismiss()
                 }

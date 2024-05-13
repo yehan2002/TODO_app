@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
@@ -49,11 +48,11 @@ class MainActivity : AppCompatActivity() {
 
         val taskDao = db.taskDao()
 
-        findViewById<Toolbar>(R.id.toolbar).title = "Task Manager"
 
         findViewById<FloatingActionButton>(R.id.add_btn).setOnClickListener {
             displayDialog(false, null)
         }
+
 
         viewModel = ViewModelProvider(this)[TaskViewModel::class.java]
         taskRV = findViewById(R.id.task_container)
@@ -117,10 +116,7 @@ class MainActivity : AppCompatActivity() {
                     db.taskDao().insertTask(newTask)
                 }
 
-                val data = db.taskDao().getTasks()
-                runOnUiThread {
-                    viewModel.setTasks(data)
-                }
+               updateTasks()
             }
         }
         builder.setNegativeButton("Cancel") { dialog, _ ->
@@ -130,5 +126,13 @@ class MainActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
+    fun updateTasks(){
+        CoroutineScope(Dispatchers.IO).launch {
+            val tasks = db.taskDao().getTasks()
 
+            runOnUiThread {
+                viewModel.setTasks(tasks)
+            }
+        }
+    }
 }
