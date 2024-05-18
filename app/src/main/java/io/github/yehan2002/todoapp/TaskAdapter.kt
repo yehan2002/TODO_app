@@ -51,7 +51,7 @@ class TaskAdapter(
             }
 
             holder.editBtn.setOnClickListener {
-                context.displayDialog(true, task)
+                context.displayDialog( task)
             }
 
 

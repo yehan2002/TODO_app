@@ -4,8 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import io.github.yehan2002.todoapp.DataConverters
 import io.github.yehan2002.todoapp.Priority
+import io.github.yehan2002.todoapp.database.DataConverters
 import java.util.Date
 
 @Entity

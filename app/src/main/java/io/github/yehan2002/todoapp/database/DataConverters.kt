@@ -1,4 +1,4 @@
-package io.github.yehan2002.todoapp
+package io.github.yehan2002.todoapp.database
 
 import androidx.room.TypeConverter
 import java.util.Date
