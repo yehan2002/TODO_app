@@ -14,8 +14,6 @@ import io.github.yehan2002.todoapp.database.entities.Task
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 
 class MainActivity : AppCompatActivity() {

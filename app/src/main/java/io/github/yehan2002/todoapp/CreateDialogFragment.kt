@@ -25,7 +25,7 @@ class CreateDialogFragment(private val activity: MainActivity, private val task:
     private lateinit var desc :TextView
     private lateinit var priority: Spinner
     private lateinit var dateText :TextView
-    private lateinit var dateContainer : LinearLayout;
+    private lateinit var dateContainer : LinearLayout
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     private var cal = Calendar.getInstance()
 
