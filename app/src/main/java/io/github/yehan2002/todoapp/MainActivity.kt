@@ -22,13 +22,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var taskRV: RecyclerView
     private lateinit var taskAdapter: TaskAdapter
 
-    private lateinit var db: TaskDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        db = TaskDatabase.getInstance(this)
 
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -52,6 +50,7 @@ class MainActivity : AppCompatActivity() {
             taskRV.layoutManager = LinearLayoutManager(this)
         }
 
+        val db = TaskDatabase.getInstance(this)
         CoroutineScope(Dispatchers.IO).launch {
             val data = db.taskDao().getTasks()
             runOnUiThread {
@@ -65,9 +64,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun updateTasks() {
+        val db = TaskDatabase.getInstance(this)
         CoroutineScope(Dispatchers.IO).launch {
             val tasks = db.taskDao().getTasks()
-
             runOnUiThread {
                 viewModel.setTasks(tasks)
             }
