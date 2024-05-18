@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.AppCompatImageButton
 import androidx.recyclerview.widget.RecyclerView
 import io.github.yehan2002.todoapp.database.TaskDatabase
 import io.github.yehan2002.todoapp.database.entities.Task
@@ -14,10 +13,9 @@ import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
-class TaskAdapter (
+class TaskAdapter(
     private val context: MainActivity,
     private val tasks: List<Task>,
-    private val viewModel: TaskViewModel,
     ) : RecyclerView.Adapter<TaskViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
             val itemView = LayoutInflater.from(parent.context).inflate(R.layout.task_layout, parent, false)
@@ -38,7 +36,7 @@ class TaskAdapter (
                 holder.taskDate.text = String.format(context.getString(R.string.date_future), days)
             }
 
-            val dao = TaskDatabase.getInstance(context).taskDao();
+            val dao = TaskDatabase.getInstance(context).taskDao()
 
             holder.view.setOnClickListener {
                 if (holder.expanderView.visibility == View.GONE){
@@ -57,7 +55,7 @@ class TaskAdapter (
             }
 
 
-            holder.view.findViewById<AppCompatImageButton>(R.id.delBtn).setOnClickListener {
+            holder.delBtn.setOnClickListener {
                 val builder = AlertDialog.Builder(context)
 
                 builder.setTitle(context.getString(R.string.delete_dialog_title))
@@ -74,7 +72,7 @@ class TaskAdapter (
                     d.dismiss()
                 }
 
-                builder.create().show();
+                builder.create().show()
             }
 
         }

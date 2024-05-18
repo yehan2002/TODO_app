@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
 
 
         viewModel.tasks.observe(this) {
-            taskAdapter = TaskAdapter(this, it, viewModel)
+            taskAdapter = TaskAdapter(this, it)
             taskRV.adapter = taskAdapter
             taskRV.layoutManager = LinearLayoutManager(this)
         }
@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun displayDialog(isEdit: Boolean, task: Task?){
+    fun displayDialog(isEdit: Boolean, task: Task?) {
         val builder = AlertDialog.Builder(this)
         val inflater = LayoutInflater.from(this)
         val dialogView: View = inflater.inflate(R.layout.task_dialog, null)
@@ -91,27 +91,29 @@ class MainActivity : AppCompatActivity() {
 
         var date = Date()
 
-        if (task != null){
+        if (task != null) {
             name.text = task.name
             desc.text = task.description
             date = task.deadline
             priority.setSelection(task.priority.ordinal)
         }
 
-        val cal = Calendar.getInstance();
+        val cal = Calendar.getInstance()
         cal.timeInMillis = date.time
 
-        dateText.text = dateFormat.format(cal.time);
+        dateText.text = dateFormat.format(cal.time)
 
-        val datePicker = DatePickerDialog(this, {
-                _: DatePicker, i: Int, i1: Int, i2: Int ->
-            cal.set(i,i1,i2)
-            dateText.text = dateFormat.format(cal.time);
+        val datePicker = DatePickerDialog(this, { _: DatePicker, year: Int, month: Int, day: Int ->
+            cal.set(year, month, day)
+            dateText.text = dateFormat.format(cal.time)
         }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH))
 
         datePicker.datePicker.minDate = cal.timeInMillis
 
-        val type = when (isEdit){true->"Edit";false-> "Create"}
+        val type = when (isEdit) {
+            true -> "Edit"
+            false -> "Create"
+        }
 
         dateContainer.setOnClickListener { datePicker.show() }
 
@@ -120,20 +122,20 @@ class MainActivity : AppCompatActivity() {
 
         builder.setPositiveButton(type) { _, _ ->
             CoroutineScope(Dispatchers.IO).launch {
-                val newTask =  Task(
+                val newTask = Task(
                     null,
                     name.text.toString(),
                     Priority.valueOf(priority.selectedItem.toString()),
                     desc.text.toString(), Date(cal.timeInMillis)
                 )
-                if (isEdit){
+                if (isEdit) {
                     newTask.uid = task!!.uid
                     db.taskDao().updateTask(newTask)
-                }else{
+                } else {
                     db.taskDao().insertTask(newTask)
                 }
 
-               updateTasks()
+                updateTasks()
             }
         }
         builder.setNegativeButton("Cancel") { dialog, _ ->
@@ -143,7 +145,7 @@ class MainActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-    fun updateTasks(){
+    fun updateTasks() {
         CoroutineScope(Dispatchers.IO).launch {
             val tasks = db.taskDao().getTasks()
 
